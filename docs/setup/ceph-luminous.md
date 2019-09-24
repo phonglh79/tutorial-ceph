@@ -43,13 +43,17 @@ yum install chrony -y
 
 - Enable NTPD 
 ```sh 
-systemctl start chronyd 
-systemctl enable chronyd 
+systemctl enable --now chronyd 
 ```
 
 - Kiểm tra chronyd hoạt động 
 ```sh 
 chronyc sources -v 
+```
+
+- Set hwclock
+```sh
+hwclock --systohc
 ```
 
 - Đặt hostname
@@ -60,7 +64,6 @@ hostnamectl set-hostname ceph01
 - Đặt IP cho các node
 ```sh 
 systemctl disable NetworkManager
-systemctl stop NetworkManager
 systemctl enable network
 systemctl start network
 
@@ -93,10 +96,22 @@ yum update -y
 curl -Lso- https://raw.githubusercontent.com/nhanhoadocs/scripts/master/Utilities/cmdlog.sh | bash
 ```
 
+- Bổ sung user `cephuser`
+```sh 
+sudo useradd -d /home/cephuser -m cephuser
+sudo passwd cephuser
+```
+
+- Cấp quyền sudo cho `cephuser`
+```sh
+echo "cephuser ALL = (root) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/cephuser
+sudo chmod 0440 /etc/sudoers.d/cephuser
+```
+
 - Vô hiệu hóa Selinux
 ```sh
-setenforce 0
 sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/sysconfig/selinux
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 ```
 
 - Mở port cho Ceph trên Firewalld  
@@ -152,18 +167,47 @@ init 6
 
 ## Cài đặt Ceph 
 
+Bổ sung repo cho ceph trên tất cả các node
+```sh 
+cat <<EOF> /etc/yum.repos.d/ceph.repo
+[ceph]
+name=Ceph packages for $basearch
+baseurl=https://download.ceph.com/rpm-luminous/el7/x86_64/
+enabled=1
+priority=2
+gpgcheck=1
+gpgkey=https://download.ceph.com/keys/release.asc
+
+[ceph-noarch]
+name=Ceph noarch packages
+baseurl=https://download.ceph.com/rpm-luminous/el7/noarch
+enabled=1
+priority=2
+gpgcheck=1
+gpgkey=https://download.ceph.com/keys/release.asc
+
+[ceph-source]
+name=Ceph source packages
+baseurl=https://download.ceph.com/rpm-luminous/el7/SRPMS
+enabled=0
+priority=2
+gpgcheck=1
+gpgkey=https://download.ceph.com/keys/release.asc
+EOF
+
+yum update -y
+```
+
 Các bước ở dưới được thực hiện toàn toàn trên Node `ceph01`
+
+- Cài đặt `python-setuptools`
+```sh 
+yum install python-setuptools -y
+```
 
 - Cài đặt `ceph-deploy`
 ```sh 
-yum install -y wget 
-wget https://download.ceph.com/rpm-luminous/el7/noarch/ceph-deploy-2.0.1-0.noarch.rpm --no-check-certificate
-rpm -ivh ceph-deploy-2.0.1-0.noarch.rpm
-```
-
-- Cài đặt `python-setuptools` để `ceph-deploy` có thể hoạt động ổn định
-```sh 
-curl https://bootstrap.pypa.io/ez_setup.py | python
+yum install ceph-deploy -y
 ```
 
 - Kiểm tra cài đặt 
@@ -181,11 +225,27 @@ ssh-keygen
 ```
 > Bấm ENTER khi có requirement 
 
+
+- Cấu hình user ssh cho ceph-deploy
+```sh 
+cat <<EOF> /root/.ssh/config
+Host ceph01
+    Hostname ceph01
+    User cephuser
+Host ceph02
+    Hostname ceph02
+    User cephuser
+Host ceph03
+    Hostname ceph03
+    User cephuser
+EOF
+```
+
 - Copy ssh key sang các node khác
 ```sh
-ssh-copy-id root@ceph01
-ssh-copy-id root@ceph02
-ssh-copy-id root@ceph03
+ssh-copy-id ceph01
+ssh-copy-id ceph02
+ssh-copy-id ceph03
 ```
 
 - Tạo các thư mục `ceph-deploy` để thao tác cài đặt vận hành Cluster

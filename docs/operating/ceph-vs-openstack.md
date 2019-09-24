@@ -80,7 +80,38 @@ Ceph3:
 
 ## Cài đặt lib ceph python cho các node `Compute` và `Controller`
 
+Update repo 
 ```
+cat <<EOF> /etc/yum.repos.d/ceph.repo
+[ceph]
+name=Ceph packages for $basearch
+baseurl=https://download.ceph.com/rpm-luminous/el7/x86_64/
+enabled=1
+priority=2
+gpgcheck=1
+gpgkey=https://download.ceph.com/keys/release.asc
+
+[ceph-noarch]
+name=Ceph noarch packages
+baseurl=https://download.ceph.com/rpm-luminous/el7/noarch
+enabled=1
+priority=2
+gpgcheck=1
+gpgkey=https://download.ceph.com/keys/release.asc
+
+[ceph-source]
+name=Ceph source packages
+baseurl=https://download.ceph.com/rpm-luminous/el7/SRPMS
+enabled=0
+priority=2
+gpgcheck=1
+gpgkey=https://download.ceph.com/keys/release.asc
+EOF
+```
+
+Cài đặt `ceph-common`
+```
+yum update -y
 yum install -y python-rbd ceph-common
 ```
 
@@ -117,7 +148,8 @@ ssh 10.10.10.73 sudo tee /etc/ceph/ceph.conf < /etc/ceph/ceph.conf
 
 - Tạo key `glance`
 ```sh 
-ceph auth get-or-create client.glance mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=images' 
+cd /ceph-deploy
+ceph auth get-or-create client.glance mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=images' > ceph.client.glance.keyring
 ```                                          
 
 - Chuyển key glance sang node glance (Ở đây Glance cài trên Controller)
@@ -138,9 +170,12 @@ sudo chmod 0640 /etc/ceph/ceph.client.glance.keyring
 ```sh 
 [DEFAULT]
 show_image_direct_url = True
+...
 
 [glance_store]
-#show_image_direct_url = True
+#stores = file,http
+#default_store = file
+#filesystem_store_datadir = /var/lib/glance/images/
 default_store = rbd
 stores = file,http,rbd
 rbd_store_pool = images
@@ -258,7 +293,8 @@ Secret value set
 ```
 
 ### 5.4 Quay lại node Controller
-- Bổ sung cấu hinh `/etc/cinder/cinder.conf` tren cac node controller
+- Bổ sung thêm cấu hinh `/etc/cinder/cinder.conf` tren cac node controller
+> Mục [DEFAULT] bổ sung thêm, Mục [ceph] thêm mới
 ```sh 
 [DEFAULT]
 notification_driver = messagingv2
@@ -327,11 +363,11 @@ ceph auth get-or-create client.nova mon 'allow r' osd 'allow class-read object_p
 
 - Copy key `nova` sang các node Compute
 ```sh
-ceph auth get-or-create client.cinder | ssh 10.10.10.72 sudo tee /etc/ceph/eph.client.nova.keyring 
-ceph auth get-or-create client.cinder | ssh 10.10.10.73 sudo tee /etc/ceph/ceph.client.nova.keyring 
+ceph auth get-or-create client.nova | ssh 10.10.10.72 sudo tee /etc/ceph/ceph.client.nova.keyring 
+ceph auth get-or-create client.nova | ssh 10.10.10.73 sudo tee /etc/ceph/ceph.client.nova.keyring 
 
-ceph auth get-key client.cinder | ssh 10.10.10.72 tee /root/client.cinder
-ceph auth get-key client.cinder | ssh 10.10.10.73 tee /root/client.cinder
+ceph auth get-key client.nova | ssh 10.10.10.72 tee /root/client.nova
+ceph auth get-key client.nova | ssh 10.10.10.73 tee /root/client.nova
 ```
 
 ### 6.2 Thao tác trên Node Compute
@@ -380,6 +416,7 @@ Secret value set
 ```
 
 - Chỉnh sửa nova.conf trên COM `/etc/nova/nova.conf`
+> Bổ sung nội dung phần config [libvirt]
 ```sh
 [libvirt]
 images_rbd_pool=vms
