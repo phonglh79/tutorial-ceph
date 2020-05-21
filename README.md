@@ -36,30 +36,26 @@
 
 [Cài đặt Ceph-RadosGW HA bản Nautilus](docs/setup/ceph-radosgw.md)
 
-# Tài liệu tích hợp
-
-[Tích hợp Linux Client sử dụng RBD Ceph](docs/operating/ceph-vs-client-linux.md)
-
-[Sử dụng CephFS (File Storage) cơ bản](docs/operating/ceph-vs-client-linux.md)
-
-[Sử dụng RBD (Block Storage) cơ bản]()
-
-[Sử dụng RGW (Object Storage) cơ bản]()
-
-[Tích hợp Ceph với OpenStack](docs/operating/ceph-vs-openstack.md)
-
-# Tài liệu vận hành
+# Tài liệu tích hợp vận hành 
 
 ## CheatSheet thao tác 
 
 [Ceph Cheat sheet](docs/operating/ceph-cheat-sheet.md)
 
-## Module của MGR
+## Tích hợp
 
-[Ceph Module Balancer](docs/operating/ceph-module-balancer.md)
+[Tích hợp Ceph với OpenStack](docs/operating/ceph-vs-openstack.md)
+
+[Sử dụng CephFS (File Storage) cơ bản](docs/operating/ceph-vs-client-linux.md)
+
+[Sử dụng RBD (Block Storage) cơ bản](docs/operating/ceph-vs-client-linux.md)
+
+[Sử dụng RGW (Object Storage) cơ bản](docs/operating/ceph-vs-client-linux.md)
+
+[Tích hợp Ceph với OpenStack](docs/operating/ceph-vs-openstack.md)
 
 # Benchmark & Troubleshooting
 
 - [Node Ceph hỏng](docs/operating/ceph-hardware-crash.md)
 
-- [Note case vận hành](docs/operating/note.md)
+- [Note case vận hành](docs/operating/README.md)
