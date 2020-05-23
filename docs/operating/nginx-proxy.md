@@ -9,7 +9,7 @@ Xem thêm (tại đây)[]
 ```
 [client.rgw.cephaio]
 host = cephaio
-rgw dns name = cephaio.thaonv.com
+rgw dns name = cephaio.domain.com
 ```
 
 ## 2. Cấu hình dns wildcard
@@ -24,23 +24,23 @@ rgw dns name = cephaio.thaonv.com
 listen-on port 53 { any; };
 allow-query     { localhost; 10.10.11.0/24; };
 
-zone "thaonv.com" IN {
+zone "domain.com" IN {
 type master;
-file "db.thaonv.com";
+file "db.domain.com";
 allow-update { none; };
 };
 ```
 
-- Tạo file `/var/named/db.thaonv.com`
+- Tạo file `/var/named/db.domain.com`
 
 ```
-@ 86400 IN SOA thaonv.com. root.thaonv.com. (
+@ 86400 IN SOA domain.com. root.domain.com. (
 20091028 ; serial yyyy-mm-dd
 10800 ; refresh every 15 min
 3600 ; retry every hour
 3600000 ; expire after 1 month +
 86400 ); min ttl of 1 day
-@ 86400 IN NS thaonv.com.
+@ 86400 IN NS domain.com.
 @ 86400 IN A 10.10.11.240
 * 86400 IN CNAME @
 ```
@@ -50,7 +50,7 @@ allow-update { none; };
 - Sửa file `/etc/resolv.conf`
 
 ```
-search thaonv.com
+search domain.com
 nameserver 10.10.11.242
 ```
 
@@ -62,12 +62,12 @@ nameserver 10.10.11.242
 
 ```
 named-checkconf /etc/named.conf
-named-checkzone thaonv.com /var/named/db.thaonv.com
+named-checkzone domain.com /var/named/db.domain.com
 ```
 
 - Ping thử
 
-`ping cephaio.thaonv.com`
+`ping cephaio.domain.com`
 
 <img src="https://i.imgur.com/vcyIacn.png">
 
@@ -79,12 +79,12 @@ named-checkzone thaonv.com /var/named/db.thaonv.com
 
 - Cấu hình file config
 
-`vi /etc/nginx/conf.d/cephaio.thaonv.com.conf`
+`vi /etc/nginx/conf.d/cephaio.domain.com.conf`
 
 ```
 server {
 	listen 80;
-	server_name *.thaonv.com;
+	server_name *.domain.com;
 
 	location / {
 		proxy_set_header X-Real-IP $remote_addr;
@@ -109,7 +109,7 @@ systemctl start nginx
 systemctl enable nginx
 ```
 
-- Từ máy client, trỏ dns server về máy ta vừa cài dns server rồi truy cập vào đường dẫn `http://cephaio.thaonv.com`
+- Từ máy client, trỏ dns server về máy ta vừa cài dns server rồi truy cập vào đường dẫn `http://cephaio.domain.com`
 
 <img src="https://i.imgur.com/6xCM9X7.png">
 
@@ -133,11 +133,11 @@ Secret Key [wWmKB4mknj7lMPVNKbLYEQqauXBt3JqE52WIANoc]: K6Fne8250Yydq0efQzhnfRH89
 Default Region [US]:
 
 Use "s3.amazonaws.com" for S3 Endpoint and not modify it to the target Amazon S3.
-S3 Endpoint [cephaio.thaonv.com]: cephaio.thaonv.com
+S3 Endpoint [cephaio.domain.com]: cephaio.domain.com
 
 Use "%(bucket)s.s3.amazonaws.com" to the target Amazon S3. "%(bucket)s" and "%(location)s" vars can be used
 if the target S3 system supports dns based buckets.
-DNS-style bucket+hostname:port template for accessing a bucket [%(bucket)s.cephaio.thaonv.com]: %(bucket)s.cephaio.thaonv.com
+DNS-style bucket+hostname:port template for accessing a bucket [%(bucket)s.cephaio.domain.com]: %(bucket)s.cephaio.domain.com
 
 Encryption password is used to protect your files from reading
 by unauthorized persons while in transfer to S3
@@ -157,8 +157,8 @@ New settings:
   Access Key: FI3ZBVBF8SI1FNLMHX9M
   Secret Key: K6Fne8250Yydq0efQzhnfRH89aXVDSozxY8YX3gR
   Default Region: US
-  S3 Endpoint: cephaio.thaonv.com
-  DNS-style bucket+hostname:port template for accessing a bucket: %(bucket)s.cephaio.thaonv.com
+  S3 Endpoint: cephaio.domain.com
+  DNS-style bucket+hostname:port template for accessing a bucket: %(bucket)s.cephaio.domain.com
   Encryption password:
   Path to GPG program: /usr/bin/gpg
   Use HTTPS protocol: True
@@ -178,4 +178,26 @@ Configuration saved to '/root/.s3cfg'
 
 - Tạo thử bucket
 
-`s3cmd mb s3://thaonv`
+`s3cmd mb s3://domain`
+
+
+# Cấu hình Log format cho Ceph S3 
+```sh 
+log_format  main  'time_local="$time_local" remote_addr=$remote_addr '
+					'remote_user=$remote_user '
+					'method=$request_method request_uri="$request_uri" '
+					'request_length=$request_length '
+					'status=$status bytes_sent=$bytes_sent '
+					'body_bytes_sent=$body_bytes_sent '
+					'http_referer=$http_referer '
+					'http_user_agent="$http_user_agent" '
+					'http_x_forwarded_for="$http_x_forwarded_for" '
+					'remote_addr="$remote_addr" '
+					'host="$host" '
+					'http_authorization="$http_authorization" '
+					'http_request_id="$http_request_id" '
+					'request_time=$request_time '
+					'upstream_response_time=$upstream_response_time '
+					'upstream_connect_time=$upstream_connect_time '
+					'upstream_header_time=$upstream_header_time';
+```

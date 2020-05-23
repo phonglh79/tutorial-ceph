@@ -95,7 +95,7 @@ Ta cùng xem ví dụ dưới đây, request được authen sử dụng php
 		        'Authorization' => 'AWS V3T81OO8E5UG8OW6B3DL'.':'.$pass,
 		        'Date' => $date
 		],'query' => [
-                'uid' => 'thaonv',
+                'uid' => 'user',
                 'bucket' => 'first-bucket',
                 'id' => 'd7549f55-14e9-4d6e-970e-7b7c01b8ec60.4215.1'
             ]]);
