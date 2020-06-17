@@ -36,6 +36,8 @@
 
 [Cài đặt Ceph-RadosGW HA bản Nautilus](docs/setup/ceph-radosgw.md)
 
+[Ceph Ansible Nautilus](docs/setup/ceph-ansible-nautilus.md)
+
 # Tài liệu tích hợp vận hành 
 
 ## CheatSheet thao tác 

@@ -74,7 +74,7 @@ ceph-deploy purge {host} [{host2} {host3}]
 
 - Mon 
 ```sh 
-systemctl restart ceph-mon@$(hostname)
+systemctl restart ceph-mon@$(hostname -s)
 ```
 
 - OSD
@@ -84,17 +84,17 @@ systemctl restart ceph-osd@{osd-id}
 
 - MDS
 ```sh 
-systemctl restart ceph-mds@$(hostname)
+systemctl restart ceph-mds@$(hostname -s)
 ```
 
 - RGW
 ```sh 
-systemctl status ceph-radosgw@rgw.$(hostname).service
+systemctl status ceph-radosgw@rgw.$(hostname -s).service
 ```
 
 - MGR
 ```sh 
-systemctl restart ceph-mgr@$(hostname)
+systemctl restart ceph-mgr@$(hostname -s)
 ```
 
 ## Kiểm tra trạng thái hệ thống 

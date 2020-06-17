@@ -888,6 +888,11 @@ systemctl restart ceph-radosgw@rgw.$(hostname -s)
 
 Đối với hệ thống có Domain và IP Public chúng ta có thể sử dụng Let's Encrypt để tạo Cert SSL cho domain 
 
+Cài đặt `certbot`
+```sh 
+yum install certbot -y
+```
+
 VD: Ở đây mình dùng domain `thanhbaba.xyz` trỏ về IP Public 103.101.x.x
 
 - Trỏ bản ghi `*` cho domain `thanhbaba.xyz` về IP Public 
@@ -924,6 +929,37 @@ _acme-challenge.s3.thanhbaba.xyz with the following value:O-_g-eeu4cSI0xXSdrw3OB
 - Bổ sung Cert cho cấu hình Nginx 
 
 ![](../../images/radosgw/nginx_cert.png)
+
+```sh 
+upstream radosgw{
+  server 192.168.80.81:7480;
+}
+
+server {
+
+        server_name *.thanhbaba.xyz;
+
+        location / {
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_pass http://radosgw;
+                client_max_body_size 0;
+                proxy_buffering off;
+                proxy_request_buffering off;
+        }
+        listen 443 ssl;
+        server_name *.thanhbaba.xyz;
+        ssl_certificate /etc/letsencrypt/live/s3.thanhbaba.xyz/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/s3.thanhbaba.xyz/privkey.pem;
+}
+
+server {
+        server_name *.thanhbaba.xyz;
+        return 301 https://$host$request_uri;
+}
+```
 
 - Kiểm tra cấu hình và reload nginx 
 ```
