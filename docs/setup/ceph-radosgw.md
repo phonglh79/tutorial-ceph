@@ -973,6 +973,105 @@ Như trên
 
 ![](../../images/radosgw/s3cmd_https.gif)
 
+# S3 command
+
+- Make bucket
+
+`s3cmd mb s3://BUCKET`
+
+- Remove bucket
+
+`s3cmd rb s3://BUCKET`
+
+- List object or bucket 
+
+`s3cmd -ls [s3://BUCKET[PREFIX]]`
+
+- List all object in all bucket 
+
+` s3cmd la `
+
+- Put file into bucket 
+
+`s3cmd put FILE  [FILE...] s3://BUCKET[PREFIX]`
+
+- Get file from bucket 
+
+`s3cmd get s3://BUCKET/OBJECT LOCAL_FILE`
+
+- Delete file from bucket 
+
+`s3cmd del s3://BUCKET/OBJECT`
+
+hoặc 
+
+`s3cmd rm s3://BUCKET/OBJECT`
+
+- Copy file betweens object 
+
+`s3cmd cp s3://BUCKET1/OBJECT1 s3://BUCKET2/OBJECT2`
+
+- Make S3 object public 
+
+`s3cmd setacl s3://bucket/path/to/file --acl-public`
+
+- Make S3 object private 
+
+` s3cmd setacl s3://bucket/path/to/file --acl-private`
+
+
+
+## APIS của RadosGW
+
+Mặc đinh RadosGW đã tự động enable APIS với endpoint admin là `http(s)://domain.com/admin/`
+```sh 
+[root@cephaio ceph-deploy]# ceph-conf --show-conf | grep rgw_enable_apis
+[client.rgw.cephaio]
+	host = "cephaio"
+	rgw_dns_name = "s3.azunce.xyz"
+[global]
+	auth_client_required = "cephx"
+	auth_cluster_required = "cephx"
+	auth_service_required = "cephx"
+	cluster_network = "10.0.13.0/24"
+	fsid = "8fa34d2c-0d0a-488a-9843-71339c3daab2"
+	mon_allow_pool_delete = "true"
+	mon_host = "10.0.12.51"
+	mon_initial_members = "cephaio"
+	osd_crush_chooseleaf_type = "0"
+	osd_crush_update_on_start = "false"
+	osd_pool_default_min_size = "1"
+	osd_pool_default_pg_num = "128"
+	osd_pool_default_pgp_num = "128"
+	osd_pool_default_size = "1"
+	public_network = "10.0.12.0/24"
+
+[root@cephaio ceph-deploy]# ceph-conf --show-config | grep rgw_enable_apis
+rgw_enable_apis = s3, s3website, swift, swift_auth, admin, sts, iam, pubsub  # <== FULL config options 
+[root@cephaio ceph-deploy]# 
+```
+
+![](http://i.imgur.com/ONYCsBr.png)
+
+
+Có thể dùng Nginx để limit access vào `/admin` 
+```sh 
+Pending ....
+```
+
+Mặc định là user không có quyền admins không có `caps` để user có quyền admin thì cần bổ sung thêm full caps cho user
+```sh 
+radosgw-admin user create --display-name="Admin User" --uid=admin
+radosgw-admin caps add --uid=admin --caps="users=*;buckets=*;metadata=*,usage=*,zone=*;usage=*"
+radosgw-admin user --uid=admin
+```
+
+## Sử dụng API của radosGW
+Yêu cầu: 
+- Tools sử dụng Postman 
+- Radosgw tạo user admin full caps
+- Tài liệu: https://docs.ceph.com/docs/giant/radosgw/s3/
+
 # Tài liệu tham khảo 
 
 [Tạo self cert Apache](https://www.linux.com/learn/creating-self-signed-ssl-certificates-apache-linux)
