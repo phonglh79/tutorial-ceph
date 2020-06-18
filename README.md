@@ -1,13 +1,10 @@
 # Storage cơ bản 
 
-[Các note ghi chép liên quan đến Storage](https://github.com/uncelvel/storage)
+- [Các note ghi chép liên quan đến Storage](https://github.com/uncelvel/storage)
 
-# Lý thuyết Ceph Storage
+# Lý thuyết Ceph Storage, Các services, thành phần của Ceph
 
-[Ceph - Overview](docs/knowledge_base/ceph-overview.md)
-
-# Các services, thành phần của Ceph
-
+- [Ceph - Overview](docs/knowledge_base/ceph-overview.md)
 - [Ceph RADOS](docs/knowledge_base/ceph-rados.md)
 - [CRUSH](docs/knowledge_base/crush.md)
 - [Ceph Storage Backend](docs/knowledge_base/bluestore_vs_filestore.md)
@@ -24,40 +21,32 @@
 
 # Tài liệu cài đặt
 
-[Cài đặt CephAIO bản Luminous sử dụng scripts](https://github.com/uncelvel/script-ceph-lumi-aio)
+- [Cài đặt CephAIO bản Luminous sử dụng scripts](https://github.com/uncelvel/script-ceph-lumi-aio)
+- [Cài đặt CephAIO bản Luminous manual-cephuser](docs/setup/ceph-luminous-aio.md)
+- [Cài đặt Ceph bản Luminous](docs/setup/ceph-luminous.md)
+- [Cài đặt Ceph bản Mimic](docs/setup/ceph-mimic.md)
+- [Cài đặt Ceph bản Nautilus](docs/setup/ceph-nautilus.md)
+- [Cài đặt Ceph-RadosGW HA bản Nautilus](docs/setup/ceph-radosgw.md)
+- [Ceph Ansible Nautilus](docs/setup/ceph-ansible-nautilus.md)
 
-[Cài đặt CephAIO bản Luminous manual-cephuser](docs/setup/ceph-luminous-aio.md)
+# Tài liệu vận hành tích hợp
 
-[Cài đặt Ceph bản Luminous](docs/setup/ceph-luminous.md)
+- [=========> Ceph Cheat sheet <=========](docs/operating/ceph-cheat-sheet.md)
 
-[Cài đặt Ceph bản Mimic](docs/setup/ceph-mimic.md)
+CephRBD
+- [Sử dụng RBD (Block Storage) cơ bản](docs/operating/ceph-vs-client-linux.md)
+- [Tích hợp Ceph với OpenStack](docs/operating/ceph-vs-openstack.md)
 
-[Cài đặt Ceph bản Nautilus](docs/setup/ceph-nautilus.md)
+CephFS
+- [Sử dụng CephFS (File Storage) cơ bản]()
 
-[Cài đặt Ceph-RadosGW HA bản Nautilus](docs/setup/ceph-radosgw.md)
-
-[Ceph Ansible Nautilus](docs/setup/ceph-ansible-nautilus.md)
-
-# Tài liệu tích hợp vận hành 
-
-## CheatSheet thao tác 
-
-[Ceph Cheat sheet](docs/operating/ceph-cheat-sheet.md)
-
-## Tích hợp
-
-[Tích hợp Ceph với OpenStack](docs/operating/ceph-vs-openstack.md)
-
-[Sử dụng CephFS (File Storage) cơ bản](docs/operating/ceph-vs-client-linux.md)
-
-[Sử dụng RBD (Block Storage) cơ bản](docs/operating/ceph-vs-client-linux.md)
-
-[Sử dụng RGW (Object Storage) cơ bản](docs/operating/ceph-vs-client-linux.md)
-
-[Tích hợp Ceph với OpenStack](docs/operating/ceph-vs-openstack.md)
+RadosGW
+- [Sử dụng RGW (Object Storage) cơ bản]()
+- [radosgw-admin - RADOS gateway user administration utility]()
+- [s3cmd - Command Line S3 Client Software and S3 Backup]()
+- [rgwadmin - Ceph Object Storage Admin API python library bindings.]()
 
 # Benchmark & Troubleshooting
 
 - [Node Ceph hỏng](docs/operating/ceph-hardware-crash.md)
-
 - [Note case vận hành](docs/operating/README.md)
