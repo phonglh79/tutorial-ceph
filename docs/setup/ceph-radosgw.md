@@ -893,20 +893,20 @@ Cài đặt `certbot`
 yum install certbot -y
 ```
 
-VD: Ở đây mình dùng domain `thanhbaba.xyz` trỏ về IP Public 103.101.x.x
+VD: Ở đây mình dùng domain `azunce.xyz` trỏ về IP Public 103.101.x.x
 
-- Trỏ bản ghi `*` cho domain `thanhbaba.xyz` về IP Public 
-- Trỏ bản ghi `s3.thanhbaba.xyz` về IP Public 
-- Trỏ bản ghi `*.s3.thanhbaba.xyz` về IP Public 
-- Tạo Cert Let's encrypt cho toàn bộ subdomain của `s3.thanhbaba.xyz`
+- Trỏ bản ghi `*` cho domain `azunce.xyz` về IP Public 
+- Trỏ bản ghi `s3.azunce.xyz` về IP Public 
+- Trỏ bản ghi `*.s3.azunce.xyz` về IP Public 
+- Tạo Cert Let's encrypt cho toàn bộ subdomain của `s3.azunce.xyz`
 ```sh 
 sudo certbot --server https://acme-v02.api.letsencrypt.org/directory -d \
-*.s3.thanhbaba.xyz -d s3.thanhbaba.xyz --manual --preferred-challenges dns-01 certonly --agree-tos
+*.s3.azunce.xyz -d s3.azunce.xyz --manual --preferred-challenges dns-01 certonly --agree-tos
 ```
-- Trong quá trình cài đặt sẽ yêu cầu tạo 1 bản ghi `TXT` cho domain `_acme-challenge.s3.thanhbaba.xyz` để xác thực ==> Tạo trên DNS
+- Trong quá trình cài đặt sẽ yêu cầu tạo 1 bản ghi `TXT` cho domain `_acme-challenge.s3.azunce.xyz` để xác thực ==> Tạo trên DNS
 
 ```
-[root@ceph-admin ~]# certbot certonly --manual -d *.s3.thanhbaba.xyz -d s3.thanhbaba.xyz --agree-tos
+[root@ceph-admin ~]# certbot certonly --manual -d *.s3.azunce.xyz -d s3.azunce.xyz --agree-tos
 --manual-public-ip-logging-ok --preferred-challenges dns-01 --server
 https://acme-v02.api.letsencrypt.org/directory
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
@@ -914,13 +914,13 @@ Plugins selected: Authenticator manual, Installer None
 Starting new HTTPS connection (1): acme-v02.api.letsencrypt.org
 Obtaining a new certificate
 Performing the following challenges:
-dns-01 challenge for s3.thanhbaba.xyz
-dns-01 challenge for s3.thanhbaba.xyz-------------------------------------------------------------------------------
+dns-01 challenge for s3.azunce.xyz
+dns-01 challenge for s3.azunce.xyz-------------------------------------------------------------------------------
 Please deploy a DNS TXT record under the name
-_acme-challenge.s3.thanhbaba.xyz with the following value:BzL-LXXkDWwdde8RFUnbQ3fdYt5N6ZXELu4T26KIXa4   <== This ValueBefore continuing, verify the record is deployed.-------------------------------------------------------------------------------
+_acme-challenge.s3.azunce.xyz with the following value:BzL-LXXkDWwdde8RFUnbQ3fdYt5N6ZXELu4T26KIXa4   <== This ValueBefore continuing, verify the record is deployed.-------------------------------------------------------------------------------
 Press Enter to continue-------------------------------------------------------------------------------
 Please deploy a DNS TXT record under the name
-_acme-challenge.s3.thanhbaba.xyz with the following value:O-_g-eeu4cSI0xXSdrw3OBrWVgzZXJC59Xjkhyk39MQ    <== This ValueBefore continuing, verify the record is deployed.
+_acme-challenge.s3.azunce.xyz with the following value:O-_g-eeu4cSI0xXSdrw3OBrWVgzZXJC59Xjkhyk39MQ    <== This ValueBefore continuing, verify the record is deployed.
 ```
 
 ![](../../images/radosgw/dns.png)
@@ -937,7 +937,7 @@ upstream radosgw{
 
 server {
 
-        server_name *.thanhbaba.xyz;
+        server_name *.azunce.xyz;
 
         location / {
                 proxy_set_header X-Real-IP $remote_addr;
@@ -950,13 +950,13 @@ server {
                 proxy_request_buffering off;
         }
         listen 443 ssl;
-        server_name *.thanhbaba.xyz;
-        ssl_certificate /etc/letsencrypt/live/s3.thanhbaba.xyz/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/s3.thanhbaba.xyz/privkey.pem;
+        server_name *.azunce.xyz;
+        ssl_certificate /etc/letsencrypt/live/s3.azunce.xyz/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/s3.azunce.xyz/privkey.pem;
 }
 
 server {
-        server_name *.thanhbaba.xyz;
+        server_name *.azunce.xyz;
         return 301 https://$host$request_uri;
 }
 ```
@@ -973,7 +973,6 @@ Như trên
 
 ![](../../images/radosgw/s3cmd_https.gif)
 
-# S3 command
 
 - Make bucket
 
@@ -1018,7 +1017,6 @@ hoặc
 - Make S3 object private 
 
 ` s3cmd setacl s3://bucket/path/to/file --acl-private`
-
 
 
 ## APIS của RadosGW
@@ -1071,6 +1069,27 @@ Yêu cầu:
 - Tools sử dụng Postman 
 - Radosgw tạo user admin full caps
 - Tài liệu: https://docs.ceph.com/docs/giant/radosgw/s3/
+
+## Bổ sung nâng cao cho phần Log Nginx parse 
+```sh 
+log_format  main  'time_local="$time_local" remote_addr=$remote_addr '
+    'remote_user=$remote_user '
+    'method=$request_method request_uri="$request_uri" '
+    'request_length=$request_length '
+    'status=$status bytes_sent=$bytes_sent '
+    'body_bytes_sent=$body_bytes_sent '
+    'http_referer=$http_referer '
+    'http_user_agent="$http_user_agent" '
+    'http_x_forwarded_for="$http_x_forwarded_for" '
+    'remote_addr="$remote_addr" '
+    'host="$host" '
+    'http_authorization="$http_authorization" '
+    'http_request_id="$http_request_id" '
+    'request_time=$request_time '
+    'upstream_response_time=$upstream_response_time '
+    'upstream_connect_time=$upstream_connect_time '
+    'upstream_header_time=$upstream_header_time';
+```
 
 # Tài liệu tham khảo 
 
