@@ -177,8 +177,6 @@ sudo yum install ansible -y
 # pip intall ansible=="2.8"
 ```
 
-```
-
 ## Cấu hình ceph-ansible 
 
 Clone repo 
