@@ -173,25 +173,10 @@ sudo pip install virtualenv
 
 Cài đặt 
 ```sh 
-# sudo yum install ansible -y 
-pip intall ansible=="2.8"
+sudo yum install ansible -y 
+# pip intall ansible=="2.8"
 ```
 
-Kiểm tra ansible version 
-```sh 
-ansbile --version 
-```
-
-Kết quả 
-```sh 
-[[root@ceph01 ~]# ansible --version
-ansible 2.8.0
-  config file = None
-  configured module search path = ['/root/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
-  ansible python module location = /usr/local/lib/python3.6/site-packages/ansible
-  executable location = /usr/local/bin/ansible
-  python version = 3.6.8 (default, Apr  2 2020, 13:34:55) [GCC 4.8.5 20150623 (Red Hat 4.8.5-39)]
-[root@ceph01 ~]
 ```
 
 ## Cấu hình ceph-ansible 
