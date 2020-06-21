@@ -43,7 +43,10 @@ yum install chrony -y
 
 - Enable NTPD 
 ```sh 
+
 systemctl enable --now chronyd 
+timedatectl set-timezone Asia/Ho_Chi_Minh
+timedatectl set-local-rtc 0
 ```
 
 - Kiểm tra chronyd hoạt động 
@@ -63,10 +66,6 @@ hostnamectl set-hostname ceph01
 
 - Đặt IP cho các node
 ```sh 
-systemctl disable NetworkManager
-systemctl enable network
-systemctl start network
-
 echo "Setup IP eth0"
 nmcli c modify eth0 ipv4.addresses 10.10.10.61/24
 nmcli c modify eth0 ipv4.gateway 10.10.10.1

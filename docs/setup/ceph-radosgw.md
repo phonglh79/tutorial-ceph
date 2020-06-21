@@ -4,17 +4,6 @@
 
 Cài đặt theo [tài liệu](ceph-nautilus.md)
 
-## Allow firewalld 
-```sh 
-# Firewalld 
-sudo firewall-cmd --list-all
-sudo firewall-cmd --zone=public --add-port 7480/tcp --permanent
-sudo firewall-cmd --reload
-
-# Iptables
-sudo iptables --list
-sudo iptables -I INPUT 1 -i <iface> -p tcp -s <ip-address>/<netmask> --dport 7480 -j ACCEPT
-```
 
 ## Cài đặt Ceph RadosGW 
 http://docs.ceph.com/docs/mimic/install/install-ceph-gateway/

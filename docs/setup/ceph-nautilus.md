@@ -116,24 +116,30 @@ sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
 
 - Mở port cho Ceph trên Firewalld  
 ```sh 
-#ceph-admin
+# start enable
 systemctl start firewalld
 systemctl enable firewalld
+
+# ceph-ansible
 sudo firewall-cmd --zone=public --add-port=80/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=2003/tcp --permanent
 sudo firewall-cmd --zone=public --add-port=4505-4506/tcp --permanent
 sudo firewall-cmd --reload
 
 # mon
-sudo systemctl start firewalld
-sudo systemctl enable firewalld
 sudo firewall-cmd --zone=public --add-port=6789/tcp --permanent
 sudo firewall-cmd --reload
 
 # osd
-sudo systemctl start firewalld
-sudo systemctl enable firewalld
 sudo firewall-cmd --zone=public --add-port=6800-7300/tcp --permanent
+sudo firewall-cmd --reload
+
+# rgw
+sudo firewall-cmd --zone=public --add-port=7480/tcp --permanent
+sudo firewall-cmd --reload
+
+# mds
+sudo firewall-cmd --zone=public --add-port=6800/tcp --permanent
 sudo firewall-cmd --reload
 ```
 
@@ -142,6 +148,7 @@ sudo firewall-cmd --reload
 sudo systemctl disable firewalld
 sudo systemctl stop firewalld
 ```
+
 
 - Bổ sung file hosts
 ```sh
