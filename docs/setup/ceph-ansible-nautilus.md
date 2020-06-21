@@ -362,6 +362,71 @@ source venv/bin/activate
 ansible-playbook site.yml -i inventory_hosts
 ```
 
+Log install OK
+```sh 
+...
+
+PLAY RECAP *********************************************************************************************************
+10.0.12.55                 : ok=385  changed=52   unreachable=0    failed=0    skipped=498  rescued=0    ignored=0
+10.0.12.56                 : ok=278  changed=56   unreachable=0    failed=0    skipped=375  rescued=0    ignored=0
+10.0.12.57                 : ok=215  changed=33   unreachable=0    failed=0    skipped=336  rescued=0    ignored=0
+
+
+INSTALLER STATUS ****************************************************************************************************
+Install Ceph Monitor           : Complete (0:00:36)
+Install Ceph Manager           : Complete (0:00:47)
+Install Ceph OSD               : Complete (0:00:55)
+Install Ceph Dashboard         : Complete (0:00:32)
+Install Ceph Grafana           : Complete (0:00:46)
+Install Ceph Node Exporter     : Complete (0:00:50)
+
+Monday 22 June 2020  01:00:39 +0700 (0:00:00.045)       2:06:44.256 ***********
+=====================================================================================
+ceph-infra : open ceph networks on monitor ---------------------------------- 7201.02s
+ceph-common : install redhat ceph packages ---------------------------------- 70.22s
+ceph-container-engine : install container packages -------------------------- 24.42s
+ceph-mgr : install ceph-mgr packages on RedHat or SUSE ---------------------- 17.25s
+ceph-grafana : wait for grafana to start ------------------------------------ 17.20s
+ceph-infra : install firewalld python binding ------------------------------- 12.73s
+ceph-osd : wait for all osd to be up ---------------------------------------- 11.54s
+ceph-osd : use ceph-volume lvm batch to create bluestore osds --------------- 8.54s
+ceph-mgr : wait for all mgr to be up ---------------------------------------- 6.22s
+ceph-grafana : install ceph-grafana-dashboards package on RedHat or SUSE ---- 5.31s
+ceph-dashboard : set or update dashboard admin username and password -------- 4.43s
+ceph-common : install yum plugin priorities --------------------------------- 3.69s
+ceph-mon : waiting for the monitor(s) to form the quorum... ----------------- 3.56s
+ceph-common : configure red hat ceph community repository stable key -------- 2.90s
+ceph-mon : fetch ceph initial keys ------------------------------------------ 2.79s
+gather and delegate facts --------------------------------------------------- 2.51s
+ceph-container-engine : start container service ----------------------------- 2.50s
+ceph-mgr : disable ceph mgr enabled modules --------------------------------- 2.38s
+ceph-mgr : add modules to ceph-mgr ------------------------------------------ 2.12s
+ceph-config : look up for ceph-volume rejected devices ---------------------- 1.69s
+(venv) [root@ceph01 ceph-ansible]#
+```
+
+Kiểm tra ceph
+```sh 
+[root@ceph01 ~]# ceph -v
+ceph version 14.2.9 (581f22da52345dba46ee232b73b990f06029a2a0) nautilus (stable)
+[root@ceph01 ~]# ceph -s
+  cluster:
+    id:     9889fc17-5f1e-43c4-a631-99009e12dfe2
+    health: HEALTH_OK
+
+  services:
+    mon: 3 daemons, quorum ceph01,ceph02,ceph03 (age 5h)
+    mgr: ceph01(active, since 5h)
+    osd: 6 osds: 6 up (since 5h), 6 in (since 5h)
+
+  data:
+    pools:   0 pools, 0 pgs
+    objects: 0 objects, 0 B
+    usage:   6.0 GiB used, 294 GiB / 300 GiB avail
+    pgs:
+
+[root@ceph01 ~]# 
+```
 
 ## Tài liệu tham khảo 
 
