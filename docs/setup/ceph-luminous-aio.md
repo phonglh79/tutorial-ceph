@@ -274,7 +274,7 @@ Trong đó:
 
 ```sh
 cat << EOF >> ceph.conf
-osd pool default size = 2
+osd pool default size = 1
 osd pool default min size = 1
 osd pool default pg num = 128
 osd pool default pgp num = 128

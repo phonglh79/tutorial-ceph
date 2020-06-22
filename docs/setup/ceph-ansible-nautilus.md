@@ -275,11 +275,14 @@ warnings can be disabled by setting deprecation_warnings=False in ansible.cfg.
 (venv) [root@ceph01 ceph-ansible]#
 ```
 
-Cấu hình fil all.yaml
+Cấu hình file all.yaml
 ```sh 
 cp group_vars/{all.yml.sample,all.yml}
 > group_vars/all.yml
 cat << EOF>> group_vars/all.yml
+## General 
+configure_firewall: False
+
 ## Packages
 
 ## Install
@@ -289,6 +292,7 @@ ceph_stable_release: nautilus
 monitor_interface: eth1
 public_network: 10.0.12.0/24
 cluster_network: 10.0.13.0/24
+ip_version: ipv4
 
 ## Ceph config
 
@@ -365,44 +369,43 @@ ansible-playbook site.yml -i inventory_hosts
 Log install OK
 ```sh 
 ...
-
-PLAY RECAP *********************************************************************************************************
-10.0.12.55                 : ok=385  changed=52   unreachable=0    failed=0    skipped=498  rescued=0    ignored=0
-10.0.12.56                 : ok=278  changed=56   unreachable=0    failed=0    skipped=375  rescued=0    ignored=0
-10.0.12.57                 : ok=215  changed=33   unreachable=0    failed=0    skipped=336  rescued=0    ignored=0
+PLAY RECAP **********************************************************************************************************
+10.0.12.55                 : ok=367  changed=11   unreachable=0    failed=0    skipped=453  rescued=0    ignored=0   
+10.0.12.56                 : ok=259  changed=9    unreachable=0    failed=0    skipped=336  rescued=0    ignored=0   
+10.0.12.57                 : ok=200  changed=6    unreachable=0    failed=0    skipped=291  rescued=0    ignored=0   
 
 
 INSTALLER STATUS ****************************************************************************************************
-Install Ceph Monitor           : Complete (0:00:36)
-Install Ceph Manager           : Complete (0:00:47)
-Install Ceph OSD               : Complete (0:00:55)
-Install Ceph Dashboard         : Complete (0:00:32)
-Install Ceph Grafana           : Complete (0:00:46)
-Install Ceph Node Exporter     : Complete (0:00:50)
+Install Ceph Manager           : Complete (0:00:24)
+Install Ceph OSD               : Complete (0:00:41)
+Install Ceph Dashboard         : Complete (0:00:33)
+Install Ceph Grafana           : Complete (0:00:31)
+Install Ceph Node Exporter     : Complete (0:00:26)
 
-Monday 22 June 2020  01:00:39 +0700 (0:00:00.045)       2:06:44.256 ***********
-=====================================================================================
-ceph-infra : open ceph networks on monitor ---------------------------------- 7201.02s
-ceph-common : install redhat ceph packages ---------------------------------- 70.22s
-ceph-container-engine : install container packages -------------------------- 24.42s
-ceph-mgr : install ceph-mgr packages on RedHat or SUSE ---------------------- 17.25s
-ceph-grafana : wait for grafana to start ------------------------------------ 17.20s
-ceph-infra : install firewalld python binding ------------------------------- 12.73s
-ceph-osd : wait for all osd to be up ---------------------------------------- 11.54s
-ceph-osd : use ceph-volume lvm batch to create bluestore osds --------------- 8.54s
-ceph-mgr : wait for all mgr to be up ---------------------------------------- 6.22s
-ceph-grafana : install ceph-grafana-dashboards package on RedHat or SUSE ---- 5.31s
-ceph-dashboard : set or update dashboard admin username and password -------- 4.43s
-ceph-common : install yum plugin priorities --------------------------------- 3.69s
-ceph-mon : waiting for the monitor(s) to form the quorum... ----------------- 3.56s
-ceph-common : configure red hat ceph community repository stable key -------- 2.90s
-ceph-mon : fetch ceph initial keys ------------------------------------------ 2.79s
-gather and delegate facts --------------------------------------------------- 2.51s
-ceph-container-engine : start container service ----------------------------- 2.50s
-ceph-mgr : disable ceph mgr enabled modules --------------------------------- 2.38s
-ceph-mgr : add modules to ceph-mgr ------------------------------------------ 2.12s
-ceph-config : look up for ceph-volume rejected devices ---------------------- 1.69s
-(venv) [root@ceph01 ceph-ansible]#
+Monday 22 June 2020  15:00:23 +0700 (0:00:00.045)       0:03:49.725 *********** 
+=============================================================================== 
+ceph-grafana : wait for grafana to start ------------------------------------------------ 5.22s
+ceph-dashboard : set or update dashboard admin username and password -------------------- 4.25s
+ceph-common : configure red hat ceph community repository stable key -------------------- 2.86s
+ceph-facts : check for a ceph mon socket ------------------------------------------------ 2.74s
+gather and delegate facts --------------------------------------------------------------- 2.55s
+ceph-config : look up for ceph-volume rejected devices ---------------------------------- 1.76s
+ceph-osd : systemd start osd ------------------------------------------------------------ 1.67s
+ceph-facts : check if the ceph mon socket is in-use ------------------------------------- 1.65s
+ceph-config : look up for ceph-volume rejected devices ---------------------------------- 1.61s
+ceph-osd : apply operating system tuning ------------------------------------------------ 1.60s
+ceph-facts : check for a ceph mon socket ------------------------------------------------ 1.56s
+ceph-config : look up for ceph-volume rejected devices ---------------------------------- 1.54s
+ceph-dashboard : disable mgr dashboard module (restart) --------------------------------- 1.33s
+ceph-handler : check if the ceph mon socket is in-use ----------------------------------- 1.30s
+ceph-facts : get default crush rule value from ceph configuration ----------------------- 1.30s
+ceph-handler : check if the ceph osd socket is in-use ----------------------------------- 1.26s
+ceph-handler : check for a ceph mon socket ---------------------------------------------- 1.25s
+ceph-mgr : copy ceph key(s) if needed --------------------------------------------------- 1.23s
+ceph-config : generate ceph configuration file: ceph.conf ------------------------------- 1.19s
+ceph-config : generate ceph configuration file: ceph.conf ------------------------------- 1.16s
+(venv) [root@ceph01 ceph-ansible]# 
+[B]   0:-*                                                                                                      
 ```
 
 Kiểm tra ceph
@@ -427,6 +430,12 @@ ceph version 14.2.9 (581f22da52345dba46ee232b73b990f06029a2a0) nautilus (stable)
 
 [root@ceph01 ~]# 
 ```
+
+Các kết quả sau khi cài 
+- Firewall nếu cấu hình sẽ đang gặp bug deploy 1-2hours https://pastebin.com/QzyyZKwY
+- Dashboard và node_exporter đang chạy ở IPv6 
+![../images/install_OK.png)
+- Các dịch vụ chạy ở dạng services bình thường 
 
 ## Tài liệu tham khảo 
 
