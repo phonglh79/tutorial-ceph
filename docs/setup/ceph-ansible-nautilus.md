@@ -436,6 +436,7 @@ Các kết quả sau khi cài
 - Dashboard và node_exporter đang chạy ở IPv6 
 ![../images/install_OK.png)
 - Các dịch vụ chạy ở dạng services bình thường 
+- Dashboard Grafana và MGR chạy ở network ceph-public
 
 ## Tài liệu tham khảo 
 
