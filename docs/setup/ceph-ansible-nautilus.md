@@ -200,14 +200,6 @@ Các bản hỗ trợ bao gồm
 - Stable 4.0 Nautilus yêu cầu Ansible 2.8  
 - Stable 5.0 Octopus yêu cầu Ansible 2.9
 
-Cài đặt các requirement trong venv
-```sh 
-cd /usr/share/ceph-ansible
-virtualenv venv -p python3.6
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
 Tạo file inventory `/usr/share/ceph-ansible/inventory_hosts` để description tất cả các server
 ```sh 
 cat <<EOF > /usr/share/ceph-ansible/inventory_hosts
@@ -341,30 +333,28 @@ Cấu hình site.yml
 cp {site.yml.sample,site.yml}
 ```
 
+## Deploy 
+
+Cài đặt các requirement trong venv
 ```sh 
-  - mons
-  - osds
-  - mdss
-  - rgws
-  - nfss
-  - rbdmirrors
-  - clients
-  - mgrs
-  - iscsigws
-  - iscsi-gws # for backward compatibility only!
-  - grafana-server
-  - rgwloadbalancers
+cd /usr/share/ceph-ansible
+virtualenv venv -p python3.6
+source venv/bin/activate
+pip install -r requirements.txt
 ```
 
-## Deploy 
 Cài đặt byobu 
 ```sh 
 yum install byobu -y 
 ```
 
-Deploy ceph
+Bật session byobu 
 ```sh 
 byobu
+```
+
+Deploy ceph
+```sh 
 cd /usr/share/ceph-ansible
 source venv/bin/activate
 ansible-playbook site.yml -i inventory_hosts
