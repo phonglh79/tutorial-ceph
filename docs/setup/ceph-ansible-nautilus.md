@@ -166,7 +166,7 @@ sudo python3.6 get-pip.py
 
 - Cài đặt venv
 ```sh 
-sudo pip install virtualenv
+pip install virtualenv
 ```
 
 ## Cài đặt ansible trên node admin 
@@ -174,7 +174,6 @@ sudo pip install virtualenv
 Cài đặt 
 ```sh 
 sudo yum install ansible -y 
-# pip intall ansible=="2.8"
 ```
 
 ## Cấu hình ceph-ansible 
@@ -189,6 +188,7 @@ Kiểm tra các bản ceph-ansible hỗ trợ
 ```sh 
 cd ceph-ansible 
 git checkout stable-4.0
+cd ..
 mv ceph-ansible /usr/share/ceph-ansible
 ln -s /usr/share/ceph-ansible/group_vars /etc/ansible/group_vars
 ```
@@ -202,7 +202,7 @@ Các bản hỗ trợ bao gồm
 
 Cài đặt các requirement trong venv
 ```sh 
-cd ceph-ansible /usr/share/ceph-ansible
+cd /usr/share/ceph-ansible
 virtualenv venv -p python3.6
 source venv/bin/activate
 pip install -r requirements.txt
@@ -243,7 +243,8 @@ ssh-copy-id 10.0.12.58
 
 Kiểm tra 
 ```sh 
-ansible -m ping all 
+cd /usr/share/ceph-ansible
+ansible -m ping -i inventory_hosts all 
 ```
 
 Kêt quả 

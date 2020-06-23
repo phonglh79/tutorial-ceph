@@ -44,6 +44,7 @@ Ceph-Ansible
 CephRBD
 - [Sử dụng RBD (Block Storage) cơ bản](docs/operating/ceph-vs-client-linux.md)
 - [Tích hợp Ceph với OpenStack](docs/operating/ceph-vs-openstack.md)
+- [RBD Mirror](docs/operating/rbd-mirror.md)
 
 CephFS
 - [Sử dụng CephFS (File Storage) cơ bản]()

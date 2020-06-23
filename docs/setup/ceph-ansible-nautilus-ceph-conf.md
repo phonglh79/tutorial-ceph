@@ -27,7 +27,7 @@ ceph_conf_overrides:
         rbd_cache: true
         bluestore_block_db_size: '5737418240'
         bluestore_block_wal_size: '2737418240'
-        osd_pool_default_crush_rule: '0'
+        osd pool default crush rule: '0'
 
     mon:
         mon_osd_backfillfull_ratio: '0.95'
@@ -76,8 +76,8 @@ radosgw_interface: eth1
 ## Openstack 
 
 ## Dashboard - Grafana 
-dashboard_admin_password: Cas@2021
-grafana_admin_password: Cas@2021
+dashboard_admin_password: Cas@2020
+grafana_admin_password: Cas@2020
 
 ## iSCSI 
 
@@ -91,66 +91,67 @@ ansible-playbook site.yml -i inventory_hosts
 
 Kết quả 
 ```sh 
-TASK [show ceph status for cluster ceph] ****************************************************************************************************************************************************************************************
-Tuesday 23 June 2020  11:28:39 +0700 (0:00:00.892)       0:07:54.821 ********** 
+TASK [show ceph status for cluster ceph] ******************************************************************************
+Tuesday 23 June 2020  14:16:07 +0700 (0:00:00.837)       0:05:02.877 ********** 
 ok: [10.0.12.55 -> 10.0.12.55] => 
   msg:
   - '  cluster:'
-  - '    id:     b5e2e377-b01e-4b8e-bb3b-e411543b35ac'
+  - '    id:     05104fd8-9b88-4810-b27a-8a3fc54509c8'
   - '    health: HEALTH_OK'
   - ' '
   - '  services:'
-  - '    mon: 3 daemons, quorum ceph01,ceph02,ceph03 (age 5m)'
-  - '    mgr: ceph01(active, since 16s)'
-  - '    osd: 6 osds: 6 up (since 4m), 6 in (since 2h)'
-  - '    rgw: 3 daemons active (ceph01.rgw0, ceph02.rgw0, ceph03.rgw0)'
+  - '    mon: 3 daemons, quorum ceph01,ceph02,ceph03 (age 3m)'
+  - '    mgr: ceph01(active, since 12s)'
+  - '    osd: 6 osds: 6 up (since 2m), 6 in (since 5m)'
   - ' '
   - '  data:'
-  - '    pools:   4 pools, 128 pgs'
-  - '    objects: 193 objects, 3.9 KiB'
-  - '    usage:   6.1 GiB used, 294 GiB / 300 GiB avail'
-  - '    pgs:     128 active+clean'
-  - ' '
-  - '  io:'
-  - '    client:   1.2 KiB/s rd, 85 B/s wr, 1 op/s rd, 0 op/s wr'
+  - '    pools:   0 pools, 0 pgs'
+  - '    objects: 0 objects, 0 B'
+  - '    usage:   6.0 GiB used, 294 GiB / 300 GiB avail'
+  - '    pgs:     '
   - ' '
 
-PLAY RECAP ********************************************************************************************************
-10.0.12.55                 : ok=496  changed=19   unreachable=0    failed=0    skipped=484  rescued=0    ignored=0   
-10.0.12.56                 : ok=355  changed=13   unreachable=0    failed=0    skipped=378  rescued=0    ignored=0   
-10.0.12.57                 : ok=296  changed=14   unreachable=0    failed=0    skipped=337  rescued=0    ignored=0   
+PLAY RECAP *********************************************************************************************************
+10.0.12.55                 : ok=380  changed=13   unreachable=0    failed=0    skipped=457  rescued=0    ignored=0   
+10.0.12.56                 : ok=267  changed=11   unreachable=0    failed=0    skipped=341  rescued=0    ignored=0   
+10.0.12.57                 : ok=211  changed=9    unreachable=0    failed=0    skipped=296  rescued=0    ignored=0   
 
 
-INSTALLER STATUS **************************************************************************************************
-Install Ceph Monitor           : Complete (0:03:55)
-Install Ceph Manager           : Complete (0:00:25)
-Install Ceph OSD               : Complete (0:00:41)
-Install Ceph RGW               : Complete (0:00:31)
-Install Ceph Dashboard         : Complete (0:00:39)
+INSTALLER STATUS ***************************************************************************************************
+Install Ceph Monitor           : Complete (0:01:45)
+Install Ceph Manager           : Complete (0:00:24)
+Install Ceph OSD               : Complete (0:00:40)
+Install Ceph Dashboard         : Complete (0:00:32)
 Install Ceph Grafana           : Complete (0:00:28)
-Install Ceph Node Exporter     : Complete (0:00:25)
+Install Ceph Node Exporter     : Complete (0:00:26)
 
-Tuesday 23 June 2020  11:28:39 +0700 (0:00:00.056)       0:07:54.877 ********** 
+Tuesday 23 June 2020  14:16:07 +0700 (0:00:00.055)       0:05:02.932 ********** 
 =============================================================================== 
-ceph-handler : restart ceph osds daemon(s) ------------------------------------------------------------------------ 102.65s
-ceph-handler : restart ceph mon daemon(s) -------------------------------------------------------------------------- 62.81s
-ceph-handler : restart ceph rgw daemon(s) -------------------------------------------------------------------------- 31.18s
-ceph-dashboard : set or update dashboard admin username and password ------------------------------------------------ 4.39s
-ceph-grafana : wait for grafana to start ---------------------------------------------------------------------------- 4.23s
-ceph-common : configure red hat ceph community repository stable key ------------------------------------------------ 2.90s
-gather and delegate facts ------------------------------------------------------------------------------------------- 2.43s
-ceph-facts : check if the ceph mon socket is in-use ----------------------------------------------------------------- 1.95s
-ceph-facts : check if the ceph mon socket is in-use ----------------------------------------------------------------- 1.87s
-ceph-config : generate ceph configuration file: ceph.conf ----------------------------------------------------------- 1.85s
-ceph-handler : unset noup flag -------------------------------------------------------------------------------------- 1.79s
-ceph-config : generate ceph configuration file: ceph.conf ----------------------------------------------------------- 1.76s
-ceph-config : look up for ceph-volume rejected devices -------------------------------------------------------------- 1.74s
-ceph-config : generate ceph configuration file: ceph.conf ----------------------------------------------------------- 1.73s
-ceph-facts : check for a ceph mon socket ---------------------------------------------------------------------------- 1.72s
-ceph-dashboard : disable mgr dashboard module (restart) ------------------------------------------------------------- 1.69s
-ceph-osd : systemd start osd ---------------------------------------------------------------------------------------- 1.67s
-ceph-osd : apply operating system tuning ---------------------------------------------------------------------------- 1.65s
-ceph-config : look up for ceph-volume rejected devices -------------------------------------------------------------- 1.58s
-ceph-config : look up for ceph-volume rejected devices -------------------------------------------------------------- 1.57s
+ceph-handler : restart ceph mon daemon(s) --------------------------------------------------------------------------- 62.85s
+ceph-dashboard : set or update dashboard admin username and password ------------------------------------------------- 4.21s
+ceph-grafana : wait for grafana to start ----------------------------------------------------------------------------- 4.21s
+ceph-handler : restart ceph osds daemon(s) --------------------------------------------------------------------------- 4.15s
+gather and delegate facts -------------------------------------------------------------------------------------------- 2.95s
+ceph-common : configure red hat ceph community repository stable key ------------------------------------------------- 2.70s
+ceph-infra : install chrony ------------------------------------------------------------------------------------------ 2.12s
+ceph-config : look up for ceph-volume rejected devices --------------------------------------------------------------- 1.88s
+ceph-osd : apply operating system tuning ----------------------------------------------------------------------------- 1.69s
+ceph-handler : unset noup flag --------------------------------------------------------------------------------------- 1.69s
+ceph-osd : systemd start osd ----------------------------------------------------------------------------------------- 1.67s
+ceph-osd : unset noup flag ------------------------------------------------------------------------------------------- 1.65s
+ceph-facts : resolve device link(s) ---------------------------------------------------------------------------------- 1.54s
+ceph-config : look up for ceph-volume rejected devices --------------------------------------------------------------- 1.54s
+ceph-config : look up for ceph-volume rejected devices --------------------------------------------------------------- 1.51s
+ceph-handler : check if the ceph osd socket is in-use ---------------------------------------------------------------- 1.31s
+ceph-handler : check for a ceph mon socket --------------------------------------------------------------------------- 1.30s
+ceph-facts : get default crush rule value from ceph configuration ---------------------------------------------------- 1.26s
+ceph-handler : check if the ceph osd socket is in-use ---------------------------------------------------------------- 1.22s
+ceph-osd : set noup flag --------------------------------------------------------------------------------------------- 1.22s
 (venv) [root@ceph01 ceph-ansible]# 
+```
+
+Kiểm tra `ceph.conf`
+```sh 
+
+
 ```
