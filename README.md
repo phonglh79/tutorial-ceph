@@ -21,13 +21,21 @@
 
 # Tài liệu cài đặt
 
+Scripts
 - [Cài đặt CephAIO bản Luminous sử dụng scripts](https://github.com/uncelvel/script-ceph-lumi-aio)
+
+Ceph-deploy
 - [Cài đặt CephAIO bản Luminous manual-cephuser](docs/setup/ceph-luminous-aio.md)
 - [Cài đặt Ceph bản Luminous](docs/setup/ceph-luminous.md)
 - [Cài đặt Ceph bản Mimic](docs/setup/ceph-mimic.md)
 - [Cài đặt Ceph bản Nautilus](docs/setup/ceph-nautilus.md)
 - [Cài đặt Ceph-RadosGW HA bản Nautilus](docs/setup/ceph-radosgw.md)
+
+Ceph-Ansible
 - [Ceph Ansible Nautilus](docs/setup/ceph-ansible-nautilus.md)
+- [Ceph Ansible Nautilus- Cài đặt thêm RGW](docs/setup/ceph-ansible-nautilus-rgw.md)
+- [Ceph Ansible Nautilus- Add/Modify ceph config](docs/setup/ceph-ansible-nautilus-ceph-conf.md)
+- [Ceph Ansible Nautilus base containerized](docs/setup/ceph-ansible-nautilus-container.md)
 
 # Tài liệu vận hành tích hợp
 

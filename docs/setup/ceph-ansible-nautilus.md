@@ -198,6 +198,7 @@ Các bản hỗ trợ bao gồm
 - Stable 3.1 Luminous và Mimic yêu cầu Ansible 2.4 
 - Stable 3.2 Luminous và Mimic yêu cầu Ansible 2.6 
 - Stable 4.0 Nautilus yêu cầu Ansible 2.8  
+- Stable 5.0 Octopus yêu cầu Ansible 2.9
 
 Cài đặt các requirement trong venv
 ```sh 
@@ -209,6 +210,7 @@ pip install -r requirements.txt
 
 Tạo file inventory `/usr/share/ceph-ansible/inventory_hosts` để description tất cả các server
 ```sh 
+cat <<EOF > /usr/share/ceph-ansible/inventory_hosts
 [mons]
 10.0.12.55
 10.0.12.56
@@ -224,6 +226,7 @@ Tạo file inventory `/usr/share/ceph-ansible/inventory_hosts` để description
 
 [grafana-server]
 10.0.12.56
+EOF
 ``` 
 
 Tạo ssh-key 
