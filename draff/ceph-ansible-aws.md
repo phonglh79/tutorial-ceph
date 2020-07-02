@@ -67,3 +67,10 @@ client_connections: {}
 container_exec_cmd:
 docker: false
 ```
+
+
+
+Nginx: 144.202.8.50/rR2,]h.[=mvKWep2 10.1.96.6 
+Ceph01: 45.77.77.96/-5aAfd$S+Paty=Hv 10.1.96.4 
+Ceph02: 144.202.8.132/7F!sKQ*bQ2A4HEX. 10.1.96.5 
+Ceph03: 45.77.156.138/,2nQvb)z4)LBBDL5 10.1.96.7 
