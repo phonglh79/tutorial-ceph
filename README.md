@@ -54,6 +54,7 @@ RadosGW
 - [radosgw-admin - RADOS gateway user administration utility](https://www.mankier.com/8/radosgw-admin)
 - [s3cmd - Command Line S3 Client Software and S3 Backup](docs/operating/s3cmd.md)
 - [rgwadmin - Ceph Object Storage Admin API python library bindings.](https://github.com/uncelvel/rgwadmin)
+- [s3ync - Sync data S3](https://github.com/uncelvel/s3sync)
 
 # Benchmark & Troubleshooting
 
