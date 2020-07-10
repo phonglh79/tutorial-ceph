@@ -74,7 +74,7 @@ ceph-deploy purge {host} [{host2} {host3}]
 
 - Mon 
 ```sh 
-systemctl restart ceph-mon@$(hostname)
+systemctl restart ceph-mon@$(hostname -s)
 ```
 
 - OSD
@@ -84,17 +84,17 @@ systemctl restart ceph-osd@{osd-id}
 
 - MDS
 ```sh 
-systemctl restart ceph-mds@$(hostname)
+systemctl restart ceph-mds@$(hostname -s)
 ```
 
 - RGW
 ```sh 
-systemctl status ceph-radosgw@rgw.$(hostname).service
+systemctl status ceph-radosgw@rgw.$(hostname -s).service
 ```
 
 - MGR
 ```sh 
-systemctl restart ceph-mgr@$(hostname)
+systemctl restart ceph-mgr@$(hostname -s)
 ```
 
 ## Kiểm tra trạng thái hệ thống 
@@ -868,6 +868,321 @@ sudo ceph-fuse -m 192.168.0.1:6789 /home/username/cephfs
 # Cấu hình trên fstab
 10.10.10.10:6789:/     /mnt/ceph    ceph    name=admin,secretfile=/etc/ceph/secret.key,noatime,_netdev    0       2
 ```
+
+## Radosgw 
+# RadosGW Admin cheatsheets
+
+```sh 
+radosgw-admin - rados REST gateway user administration utility
+```
+
+Các câu lệnh thao tác với `radosgw-admin`
+
+Tạo user 
+```sh 
+radosgw-admin user create --display-name="Admin User" --uid=admin
+radosgw-admin user create --display-name="CanhDX" --uid=canhdx
+```
+
+Chỉnh sửa user có sẵn 
+```sh 
+radosgw-admin user modify --uid=canhdx --display-name="CanhDX22"
+```
+> Các thông tin có thể chỉnh sửa nhanh `display_name`, `email`,  `max_buckets`,...
+
+Show chi tiết các cấu hình user 
+```sh 
+radosgw-admin user info --uid=canhdx
+```
+
+Xóa user
+```sh 
+radosgw-admin user rm --uid=canhdx
+```
+
+Suspend user 
+```sh 
+radosgw-admin user suspend --uid=canhdx
+```
+
+Resume(Enable) user 
+```sh 
+radosgw-admin user enable --uid=canhdx
+```
+
+Kiểm tra chi tiết user 
+```sh 
+radosgw-admin user check --uid=canhdx
+```
+
+Kiểm tra tình trạng sử dụng của user 
+```sh 
+radosgw-admin user stats --uid=canhdx
+```
+
+Bổ sung thêm `caps` quyền admin cho user admin 
+```sh 
+radosgw-admin caps add --uid=admin --caps="users=*;buckets=*;metadata=*,usage=*,zone=*;usage=*"
+```
+> Có các options khác `--caps="[users|buckets|metadata|usage|zone]=[*|read|write|read, write]"`
+
+Xóa bớt `caps` quyền của user 
+```sh 
+radosgw-admin caps add --uid=canhdx --caps="users=*"
+radosgw-admin caps rm --uid=canhdx --caps="users=*"
+```
+
+Tạo subuser 
+```sh 
+radosgw-admin subuser create --uid=canhdx --subuser=canhdx2 --access=full
+```
+> Access `--access=[ read | write | readwrite | full ]`
+
+Chỉnh sửa subuser
+```sh 
+
+```
+
+Xóa subuser 
+```sh 
+
+```
+
+Tạo access key 
+```sh 
+
+```
+
+Xóa access key 
+```sh 
+
+```
+
+List toàn bộ bucket 
+```sh 
+
+```
+
+Link bucket cho user 
+```sh 
+
+```
+
+Unlink bucket của user 
+```sh 
+
+```
+
+Xóa bucket 
+```sh 
+
+```
+
+Kiểm tra index của bucket 
+```sh 
+
+```
+
+Xóa object 
+```sh 
+
+```
+
+Unlink object của bucket user 
+```sh 
+
+```
+
+Set quota 
+```sh 
+
+```
+
+Enable quota 
+```sh 
+
+```
+
+Disable quota
+```sh 
+
+```
+
+
+Show region info
+```sh 
+
+```
+
+List toàn bộ region 
+```sh 
+
+```
+
+Set region info 
+```sh 
+
+```
+
+Set region mặc định 
+```sh 
+
+```
+
+Show region map 
+```sh 
+
+```
+
+Set region map 
+```sh 
+
+```
+
+Show zone cluster param 
+```sh 
+
+```
+
+Set zone cluster param 
+```sh 
+
+```
+
+List all zone của cluster
+```sh 
+
+```
+
+Add pool vào để lưu trữ data 
+```sh 
+
+```
+
+Remove pool khỏi lưu trữ data 
+```sh 
+
+```
+
+List toàn bộ pool 
+```sh 
+
+```
+
+Show policy của bucket 
+```sh 
+
+```
+
+Show toàn bộ log objects
+```sh 
+
+```
+
+Xóa log của object 
+```sh 
+
+```
+
+Thống kê tình trạng sử dụng 
+```sh 
+
+```
+
+Trim, reset lại tình trạng sử dụng 
+```sh 
+
+```
+
+
+```sh 
+gc list
+```
+
+```sh 
+gc process 
+```
+
+
+```sh 
+metadata get 
+```
+
+
+```sh 
+metadata put 
+```
+
+```sh 
+metadata rm 
+```
+
+
+```sh 
+metadata list 
+```
+
+
+```sh 
+mdlog list 
+```
+
+```sh 
+bilog list 
+```
+
+
+```sh 
+bilog trim 
+```
+
+
+```sh 
+datalog list 
+```
+
+```sh 
+datalog trim 
+```
+
+
+```sh 
+opstate list 
+```
+
+
+```sh 
+opstate set 
+```
+
+```sh 
+opstate renew 
+```
+
+
+```sh 
+opstate rm 
+```
+
+
+```sh 
+replicalog get
+```
+
+```sh 
+replicalog delete
+```
+
+
+```sh 
+orphas  find 
+```
+
+
+```sh 
+orphans finish
+```
+
 
 # Cấu hình ceph.conf tham khảo
 ```sh 

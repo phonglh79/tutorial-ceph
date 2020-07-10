@@ -4,17 +4,6 @@
 
 Cài đặt theo [tài liệu](ceph-nautilus.md)
 
-## Allow firewalld 
-```sh 
-# Firewalld 
-sudo firewall-cmd --list-all
-sudo firewall-cmd --zone=public --add-port 7480/tcp --permanent
-sudo firewall-cmd --reload
-
-# Iptables
-sudo iptables --list
-sudo iptables -I INPUT 1 -i <iface> -p tcp -s <ip-address>/<netmask> --dport 7480 -j ACCEPT
-```
 
 ## Cài đặt Ceph RadosGW 
 http://docs.ceph.com/docs/mimic/install/install-ceph-gateway/
@@ -888,20 +877,25 @@ systemctl restart ceph-radosgw@rgw.$(hostname -s)
 
 Đối với hệ thống có Domain và IP Public chúng ta có thể sử dụng Let's Encrypt để tạo Cert SSL cho domain 
 
-VD: Ở đây mình dùng domain `thanhbaba.xyz` trỏ về IP Public 103.101.x.x
+Cài đặt `certbot`
+```sh 
+yum install certbot -y
+```
 
-- Trỏ bản ghi `*` cho domain `thanhbaba.xyz` về IP Public 
-- Trỏ bản ghi `s3.thanhbaba.xyz` về IP Public 
-- Trỏ bản ghi `*.s3.thanhbaba.xyz` về IP Public 
-- Tạo Cert Let's encrypt cho toàn bộ subdomain của `s3.thanhbaba.xyz`
+VD: Ở đây mình dùng domain `azunce.xyz` trỏ về IP Public 103.101.x.x
+
+- Trỏ bản ghi `*` cho domain `azunce.xyz` về IP Public 
+- Trỏ bản ghi `s3.azunce.xyz` về IP Public 
+- Trỏ bản ghi `*.s3.azunce.xyz` về IP Public 
+- Tạo Cert Let's encrypt cho toàn bộ subdomain của `s3.azunce.xyz`
 ```sh 
 sudo certbot --server https://acme-v02.api.letsencrypt.org/directory -d \
-*.s3.thanhbaba.xyz -d s3.thanhbaba.xyz --manual --preferred-challenges dns-01 certonly --agree-tos
+*.s3.azunce.xyz -d s3.azunce.xyz --manual --preferred-challenges dns-01 certonly --agree-tos
 ```
-- Trong quá trình cài đặt sẽ yêu cầu tạo 1 bản ghi `TXT` cho domain `_acme-challenge.s3.thanhbaba.xyz` để xác thực ==> Tạo trên DNS
+- Trong quá trình cài đặt sẽ yêu cầu tạo 1 bản ghi `TXT` cho domain `_acme-challenge.s3.azunce.xyz` để xác thực ==> Tạo trên DNS
 
 ```
-[root@ceph-admin ~]# certbot certonly --manual -d *.s3.thanhbaba.xyz -d s3.thanhbaba.xyz --agree-tos
+[root@ceph-admin ~]# certbot certonly --manual -d *.s3.azunce.xyz -d s3.azunce.xyz --agree-tos
 --manual-public-ip-logging-ok --preferred-challenges dns-01 --server
 https://acme-v02.api.letsencrypt.org/directory
 Saving debug log to /var/log/letsencrypt/letsencrypt.log
@@ -909,13 +903,13 @@ Plugins selected: Authenticator manual, Installer None
 Starting new HTTPS connection (1): acme-v02.api.letsencrypt.org
 Obtaining a new certificate
 Performing the following challenges:
-dns-01 challenge for s3.thanhbaba.xyz
-dns-01 challenge for s3.thanhbaba.xyz-------------------------------------------------------------------------------
+dns-01 challenge for s3.azunce.xyz
+dns-01 challenge for s3.azunce.xyz-------------------------------------------------------------------------------
 Please deploy a DNS TXT record under the name
-_acme-challenge.s3.thanhbaba.xyz with the following value:BzL-LXXkDWwdde8RFUnbQ3fdYt5N6ZXELu4T26KIXa4   <== This ValueBefore continuing, verify the record is deployed.-------------------------------------------------------------------------------
+_acme-challenge.s3.azunce.xyz with the following value:BzL-LXXkDWwdde8RFUnbQ3fdYt5N6ZXELu4T26KIXa4   <== This ValueBefore continuing, verify the record is deployed.-------------------------------------------------------------------------------
 Press Enter to continue-------------------------------------------------------------------------------
 Please deploy a DNS TXT record under the name
-_acme-challenge.s3.thanhbaba.xyz with the following value:O-_g-eeu4cSI0xXSdrw3OBrWVgzZXJC59Xjkhyk39MQ    <== This ValueBefore continuing, verify the record is deployed.
+_acme-challenge.s3.azunce.xyz with the following value:O-_g-eeu4cSI0xXSdrw3OBrWVgzZXJC59Xjkhyk39MQ    <== This ValueBefore continuing, verify the record is deployed.
 ```
 
 ![](../../images/radosgw/dns.png)
@@ -924,6 +918,37 @@ _acme-challenge.s3.thanhbaba.xyz with the following value:O-_g-eeu4cSI0xXSdrw3OB
 - Bổ sung Cert cho cấu hình Nginx 
 
 ![](../../images/radosgw/nginx_cert.png)
+
+```sh 
+upstream radosgw{
+  server 192.168.80.81:7480;
+}
+
+server {
+
+        server_name *.azunce.xyz;
+
+        location / {
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $host;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_pass http://radosgw;
+                client_max_body_size 0;
+                proxy_buffering off;
+                proxy_request_buffering off;
+        }
+        listen 443 ssl;
+        server_name *.azunce.xyz;
+        ssl_certificate /etc/letsencrypt/live/s3.azunce.xyz/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/s3.azunce.xyz/privkey.pem;
+}
+
+server {
+        server_name *.azunce.xyz;
+        return 301 https://$host$request_uri;
+}
+```
 
 - Kiểm tra cấu hình và reload nginx 
 ```
@@ -936,6 +961,124 @@ nginx -s reload
 Như trên
 
 ![](../../images/radosgw/s3cmd_https.gif)
+
+
+- Make bucket
+
+`s3cmd mb s3://BUCKET`
+
+- Remove bucket
+
+`s3cmd rb s3://BUCKET`
+
+- List object or bucket 
+
+`s3cmd -ls [s3://BUCKET[PREFIX]]`
+
+- List all object in all bucket 
+
+` s3cmd la `
+
+- Put file into bucket 
+
+`s3cmd put FILE  [FILE...] s3://BUCKET[PREFIX]`
+
+- Get file from bucket 
+
+`s3cmd get s3://BUCKET/OBJECT LOCAL_FILE`
+
+- Delete file from bucket 
+
+`s3cmd del s3://BUCKET/OBJECT`
+
+hoặc 
+
+`s3cmd rm s3://BUCKET/OBJECT`
+
+- Copy file betweens object 
+
+`s3cmd cp s3://BUCKET1/OBJECT1 s3://BUCKET2/OBJECT2`
+
+- Make S3 object public 
+
+`s3cmd setacl s3://bucket/path/to/file --acl-public`
+
+- Make S3 object private 
+
+` s3cmd setacl s3://bucket/path/to/file --acl-private`
+
+
+## APIS của RadosGW
+
+Mặc đinh RadosGW đã tự động enable APIS với endpoint admin là `http(s)://domain.com/admin/`
+```sh 
+[root@cephaio ceph-deploy]# ceph-conf --show-conf | grep rgw_enable_apis
+[client.rgw.cephaio]
+	host = "cephaio"
+	rgw_dns_name = "s3.azunce.xyz"
+[global]
+	auth_client_required = "cephx"
+	auth_cluster_required = "cephx"
+	auth_service_required = "cephx"
+	cluster_network = "10.0.13.0/24"
+	fsid = "8fa34d2c-0d0a-488a-9843-71339c3daab2"
+	mon_allow_pool_delete = "true"
+	mon_host = "10.0.12.51"
+	mon_initial_members = "cephaio"
+	osd_crush_chooseleaf_type = "0"
+	osd_crush_update_on_start = "false"
+	osd_pool_default_min_size = "1"
+	osd_pool_default_pg_num = "128"
+	osd_pool_default_pgp_num = "128"
+	osd_pool_default_size = "1"
+	public_network = "10.0.12.0/24"
+
+[root@cephaio ceph-deploy]# ceph-conf --show-config | grep rgw_enable_apis
+rgw_enable_apis = s3, s3website, swift, swift_auth, admin, sts, iam, pubsub  # <== FULL config options 
+[root@cephaio ceph-deploy]# 
+```
+
+![](http://i.imgur.com/ONYCsBr.png)
+
+
+Có thể dùng Nginx để limit access vào `/admin` 
+```sh 
+Pending ....
+```
+
+Mặc định là user không có quyền admins không có `caps` để user có quyền admin thì cần bổ sung thêm full caps cho user
+```sh 
+radosgw-admin user create --display-name="Admin User" --uid=admin
+radosgw-admin caps add --uid=admin --caps="users=*;buckets=*;metadata=*,usage=*,zone=*;usage=*"
+radosgw-admin user --uid=admin
+```
+
+## Sử dụng API của radosGW
+Yêu cầu: 
+- Tools sử dụng Postman 
+- Radosgw tạo user admin full caps
+- Tài liệu: https://docs.ceph.com/docs/giant/radosgw/s3/
+
+## Bổ sung nâng cao cho phần Log Nginx parse 
+```sh 
+log_format  main  'time_local="$time_local" remote_addr=$remote_addr '
+    'remote_user=$remote_user '
+    'method=$request_method request_uri="$request_uri" '
+    'request_length=$request_length '
+    'status=$status bytes_sent=$bytes_sent '
+    'body_bytes_sent=$body_bytes_sent '
+    'http_referer=$http_referer '
+    'http_user_agent="$http_user_agent" '
+    'http_x_forwarded_for="$http_x_forwarded_for" '
+    'remote_addr="$remote_addr" '
+    'host="$host" '
+    'http_authorization="$http_authorization" '
+    'http_request_id="$http_request_id" '
+    'request_time=$request_time '
+    'upstream_response_time=$upstream_response_time '
+    'upstream_connect_time=$upstream_connect_time '
+    'upstream_header_time=$upstream_header_time';
+```
 
 # Tài liệu tham khảo 
 
